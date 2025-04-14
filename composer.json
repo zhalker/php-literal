@@ -1,0 +1,29 @@
+{
+    "name": "zhalker/php-literal",
+    "description": "Backtick-powered PHP literal templating with embedded expressions, inspired by JavaScript template literals.",
+    "keywords": [
+        "php",
+        "template",
+        "literal",
+        "backtick",
+        "template-literals"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zhalker",
+            "email": "willardh.knox@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPLiteral\\": "src/"
+        }
+    },
+    "require-dev": {},
+    "minimum-stability": "stable"
+}
