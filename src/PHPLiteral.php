@@ -83,6 +83,12 @@ function processBacktickContent(string $content, bool $strict_mode = true): stri
     // Restore escaped curly braces \{ and \}
     $converted = str_replace(['\\{', '\\}'], ['{', '}'], $converted);
 
+    // Converted single \"
+    $converted = preg_replace('/(?<!\\\\)\\\\(")/', '$1', $converted);
+
+    // Clean \\"
+    $converted = str_replace('\\"', '\\\"', $converted);
+
     return $converted;
 }
 
