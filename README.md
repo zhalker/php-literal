@@ -22,7 +22,7 @@ function salute($name) {
 
 echo `Hello!!\n
 
-{salude($name)}`;
+{salute($name)}`;
 
 ```
 
