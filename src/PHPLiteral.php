@@ -71,23 +71,19 @@ function processBacktickContent(string $content, bool $strict_mode = true): stri
         $escaped_content = str_replace(["\n", "\r", "\t"], '', $escaped_content);
         // 3. Replace literal \n and \r with real newlines
         $escaped_content = str_replace(['\\n', '\\r', '\\t'], ["\n", "\r", '\\t'], $escaped_content);
-        // 4. Escape double quotes
-        $escaped_content = str_replace('"', '\"', $escaped_content);
+        // 4. Re-escaped
+        $escaped_content = preg_replace('/(?<!\\\\)(\\\\)"/', '\\\\\1\"', $escaped_content);
+        // 5. Escape double quotes
+        $escaped_content = preg_replace('/(?<!\\\\)"/', '\\"', $escaped_content);
     }
 
     // Replace unescaped {expr} with PHP expressions
     $converted = preg_replace_callback('/(?<!\\\\)\{(.*?)\}/s', function ($matches) {
-        return '" . ' . $matches[1] . ' . "';
+        return '" . ' . preg_replace('/(?<!\\\\)\\\\(")/', '$1', $matches[1]) . ' . "';
     }, $escaped_content);
 
     // Restore escaped curly braces \{ and \}
     $converted = str_replace(['\\{', '\\}'], ['{', '}'], $converted);
-
-    // Converted single \"
-    $converted = preg_replace('/(?<!\\\\)\\\\(")/', '$1', $converted);
-
-    // Clean \\"
-    $converted = str_replace('\\"', '\\\"', $converted);
 
     return $converted;
 }
