@@ -39,15 +39,19 @@ include_once PHPLiteral("path/to/your/file.php", false);
 ```
 
 ```php
-//Example 1:
+//Output 1:
 Hello!!\n
 
 Im Zhalker
 
-//Example 2:
+//Output 2:
 Hello!!
 Im Zhalker
 ```
+## Sandbox
+
+- [Paiza.io](https://paiza.io/projects/Drfk_-SAZDMXAtUm7MUfow)
+
 ## How It Works
 
 - **Backtick literals**: Strings delimited by backticks (\`\`) are parsed and evaluated, similar to JavaScript template literals.
