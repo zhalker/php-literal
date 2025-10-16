@@ -1,0 +1,60 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "a34543e5656cc71c0add5381ce08b660",
+    "packages": [
+        {
+            "name": "zhalker/dumb-artifact-for-multi-level-contextual-parsing-in-php",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zhalker/dumb-artifact-for-multi-level-contextual-parsing-in-php.git",
+                "reference": "0627be4d9701eeba7736d4e616f8f40928d4ba73"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zhalker/dumb-artifact-for-multi-level-contextual-parsing-in-php/zipball/0627be4d9701eeba7736d4e616f8f40928d4ba73",
+                "reference": "0627be4d9701eeba7736d4e616f8f40928d4ba73",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DumbContextualParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "zhalker"
+                }
+            ],
+            "description": "An unnecessarily complex tool that replaces patterns through multi-level contextual parsing in PHP. Dumb, yet somehow useful",
+            "support": {
+                "issues": "https://github.com/zhalker/dumb-artifact-for-multi-level-contextual-parsing-in-php/issues",
+                "source": "https://github.com/zhalker/dumb-artifact-for-multi-level-contextual-parsing-in-php/tree/v1.0.0"
+            },
+            "time": "2025-10-16T21:21:28+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.4"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}

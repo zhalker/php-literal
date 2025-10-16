@@ -17,7 +17,8 @@
         }
     ],
     "require": {
-        "php": ">=7.4"
+        "php": "^8.0",
+        "zhalker/dumb-artifact-for-multi-level-contextual-parsing-in-php": "^1.0"
     },
     "autoload": {
         "files": [
@@ -27,6 +28,5 @@
             "PHPLiteral\\": "src/"
         }
     },
-    "require-dev": {},
     "minimum-stability": "stable"
 }
