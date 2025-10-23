@@ -10,9 +10,9 @@ use DumbContextualParser\ContextualReplaceText;
  *
  * @param string $path Path to the PHP file to include.
  * @param bool $strict_mode If true, preserves newlines and escapes characters literally.
- * @return mixed The result of the included file.
+ * @return string The result of the included file.
  */
-function PHPLiteral(string $path): mixed {
+function PHPLiteral(string $path): string {
 
     if (!file_exists($path)) {
         return 'error file not found: ' . $path;
@@ -25,18 +25,23 @@ function PHPLiteral(string $path): mixed {
             'scope_start' => '<?php',
             'scope_end'   => '?>',
             'self_replace' => [
-                'open' => '```',
-                'close' => '```',
-                'pattern' => 'echo "%s"'
+                'block' => [
+                    'open' => '```',
+                    'close' => '```',
+                    'pattern' => 'echo "%s"'
+                ]
             ],
             'inner_scopes' => [
                 [
                     'scope_start' => '```',
                     'scope_end'   => '```',
                     'self_replace' => [
-                        'open' => '{',
-                        'close' => '}',
-                        'pattern' => '".(%s)."'
+                        'block' => [
+                            'open' => '{',
+                            'close' => '}',
+                            'pattern' => '".(%s)."'
+                        ]
+
                     ]
                 ]
             ]
@@ -45,18 +50,39 @@ function PHPLiteral(string $path): mixed {
             'scope_start' => '<?php',
             'scope_end'   => '?>',
             'self_replace' => [
-                'open' => '`',
-                'close' => '`',
-                'pattern' => '"%s"'
+                'block' => [
+                    'open' => '`',
+                    'close' => '`',
+                    'pattern' => '"%s"'
+                ]
             ],
             'inner_scopes' => [
                 [
                     'scope_start' => '`',
                     'scope_end'   => '`',
                     'self_replace' => [
-                        'open' => '{',
-                        'close' => '}',
-                        'pattern' => '".(%s)."'
+                        'block' => [
+                            'open' => '"',
+                            'close' => '"',
+                            'pattern' => function ($inner) {
+                                return sprintf('\x22%s\x22', $inner);
+                            }
+                        ],
+                        'token' => [
+                            'search' => '/(?<!\\\\)"/',
+                            'subject' => '\x22'
+                        ]
+                    ]
+                ],
+                [
+                    'scope_start' => '`',
+                    'scope_end'   => '`',
+                    'self_replace' => [
+                        'block' => [
+                            'open' => '{',
+                            'close' => '}',
+                            'pattern' => '".(%s)."'
+                        ]
                     ]
                 ]
             ]
