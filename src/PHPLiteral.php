@@ -3,6 +3,7 @@
 namespace PHPLiteral;
 
 use DumbContextualParser\ContextualReplaceText;
+use DumbContextualParser\ReplaceText;
 
 /**
  * Includes a PHP file, allowing use of backtick-delimited literal strings
@@ -26,64 +27,34 @@ function PHPLiteral(string $path): string {
             'scope_end'   => '?>',
             'self_replace' => [
                 'block' => [
-                    'open' => '```',
-                    'close' => '```',
-                    'pattern' => 'echo "%s"'
-                ]
-            ],
-            'inner_scopes' => [
-                [
-                    'scope_start' => '```',
-                    'scope_end'   => '```',
-                    'self_replace' => [
-                        'block' => [
-                            'open' => '{',
-                            'close' => '}',
-                            'pattern' => '".(%s)."'
-                        ]
-
-                    ]
-                ]
-            ]
-        ],
-        [
-            'scope_start' => '<?php',
-            'scope_end'   => '?>',
-            'self_replace' => [
-                'block' => [
                     'open' => '`',
                     'close' => '`',
-                    'pattern' => '"%s"'
-                ]
-            ],
-            'inner_scopes' => [
-                [
-                    'scope_start' => '`',
-                    'scope_end'   => '`',
-                    'self_replace' => [
-                        'block' => [
-                            'open' => '"',
-                            'close' => '"',
-                            'pattern' => function ($inner) {
-                                return sprintf('\x22%s\x22', $inner);
+                    'pattern' => function ($inner) {
+                        return sprintf('%s', ReplaceText::customReplace(
+                            $inner,
+                            '{',
+                            '}',
+                            function ($text, $strings, $blocks) {
+                                $evalStrings = [];
+                                $evalBlocks = [];
+                                foreach ($strings as $string) {
+                                    $evalStrings[] = substr($text, $string['start'], $string['end'] - $string['start'] + 1);
+                                }
+
+                                foreach ($blocks as $block) {
+                                    $evalBlocks[] = substr($text, $block['start'] + strlen($block['open']), $block['end'] - $block['start'] - strlen($block['close']));
+                                }
+
+                                if (empty($evalStrings) && empty($evalBlocks)) {
+                                    return "''";
+                                } elseif (empty($evalBlocks)) {
+                                    return '"' . implode('', $evalStrings) . '"';
+                                } else {
+                                    return '"".PHPLiteral\PHPLiteralTagged(' . var_export($evalStrings, true) . ', [' . array_reduce($evalBlocks, fn($acc, $item) => $acc . $item . ', ', '') . ']).""';
+                                }
                             }
-                        ],
-                        'token' => [
-                            'search' => '/(?<!\\\\)"/',
-                            'subject' => '\x22'
-                        ]
-                    ]
-                ],
-                [
-                    'scope_start' => '`',
-                    'scope_end'   => '`',
-                    'self_replace' => [
-                        'block' => [
-                            'open' => '{',
-                            'close' => '}',
-                            'pattern' => '".(%s)."'
-                        ]
-                    ]
+                        ));
+                    }
                 ]
             ]
         ]
@@ -121,4 +92,17 @@ function tempPathFromString(string $code, string $originalPath): string {
     });
 
     return $phpTempFile;
+}
+
+function PHPLiteralTagged(array $strings, array $expressions): string {
+    $result = '';
+
+    foreach ($strings as $key => $value) {
+        $result .= $value;
+        if (isset($expressions[$key])) {
+            $result .= $expressions[$key];
+        }
+    }
+
+    return $result;
 }
