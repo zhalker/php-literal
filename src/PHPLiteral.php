@@ -27,7 +27,7 @@ function PHPLiteral(string $path): string {
             'scope_end'   => '?>',
             'self_replace' => [
                 'block' => [
-                    'open' => '`',
+                    'open' => '/(?<!\S)(`)/s',
                     'close' => '`',
                     'pattern' => function ($inner) {
                         return sprintf('%s', ReplaceText::customReplace(
@@ -48,7 +48,7 @@ function PHPLiteral(string $path): string {
                                 if (empty($evalStrings) && empty($evalBlocks)) {
                                     return "''";
                                 } elseif (empty($evalBlocks)) {
-                                    return '"' . implode('', $evalStrings) . '"';
+                                    return "'" . implode('', $evalStrings) . "'";
                                 } else {
                                     return '"".PHPLiteral\PHPLiteralTagged(' . var_export($evalStrings, true) . ', [' . array_reduce($evalBlocks, fn($acc, $item) => $acc . $item . ', ', '') . ']).""';
                                 }
