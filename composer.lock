@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "77a28d06ef8793e62608063f8458fa64",
+    "content-hash": "948d5fe25e980d48d575f746aef0205b",
     "packages": [
         {
             "name": "zhalker/dumb-artifact-for-multi-level-contextual-parsing-in-php",

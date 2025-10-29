@@ -27,7 +27,7 @@ function PHPLiteral(string $path): string {
             'scope_end'   => '?>',
             'self_replace' => [
                 'block' => [
-                    'open' => '/(?<!\S)(`)/s',
+                    'open' => '`',
                     'close' => '`',
                     'pattern' => function ($inner) {
                         return sprintf('%s', ReplaceText::customReplace(
@@ -37,12 +37,17 @@ function PHPLiteral(string $path): string {
                             function ($text, $strings, $blocks) {
                                 $evalStrings = [];
                                 $evalBlocks = [];
+
+                                // Process free ranges
                                 foreach ($strings as $string) {
-                                    $evalStrings[] = substr($text, $string['start'], $string['end'] - $string['start'] + 1);
+                                    $evalStrings[] = substr($text, $string['start'], $string['end'] - $string['start']);
                                 }
 
+                                // Process internal blocks
                                 foreach ($blocks as $block) {
-                                    $evalBlocks[] = substr($text, $block['start'] + strlen($block['open']), $block['end'] - $block['start'] - strlen($block['close']));
+                                    $blockStart = $block['open']['end'];
+                                    $blockEnd = $block['close']['start'] ?? $block['open']['end'];
+                                    $evalBlocks[] = substr($text, $blockStart, $blockEnd - $blockStart);
                                 }
 
                                 if (empty($evalStrings) && empty($evalBlocks)) {
@@ -50,7 +55,7 @@ function PHPLiteral(string $path): string {
                                 } elseif (empty($evalBlocks)) {
                                     return "'" . implode('', $evalStrings) . "'";
                                 } else {
-                                    return '"".PHPLiteral\PHPLiteralTagged(' . var_export($evalStrings, true) . ', [' . array_reduce($evalBlocks, fn($acc, $item) => $acc . $item . ', ', '') . ']).""';
+                                    return '"".PHPLiteral\PHPLiteralTagged(' . PHPLiteralExportArray($evalStrings) . ', [' . trim(trim(array_reduce($evalBlocks, fn($acc, $item) => $acc . $item . ', ', '')), ',') . ']).""';
                                 }
                             }
                         ));
@@ -105,4 +110,15 @@ function PHPLiteralTagged(array $strings, array $expressions): string {
     }
 
     return $result;
+}
+
+function PHPLiteralExportArray(array $strings): string {
+    $result = [];
+    foreach ($strings as $str) {
+        // Then we replace common escape sequences with their real characters
+        $str = str_replace(['\n', '\r', '\t'], ["\n", "\r", "\t"], $str);
+
+        $result[] = $str;
+    }
+    return var_export($result, true);
 }
